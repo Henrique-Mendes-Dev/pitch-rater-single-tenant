@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+@import "tailwindcss";
+
+:root {
+  --background: #fffeee; /* Off-white normativo do manual */
+  --foreground: #161616;
+  --cesar-orange: #ff6002;
+  --cesar-orange-dark: #dd4012;
+  --cesar-black: #161616;
+  --cesar-gray: #3f3f3f;
+  --cesar-slate: #818b9d;
+  --cesar-offwhite: #fffeee;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-cesar-orange: var(--cesar-orange);
+  --color-cesar-orange-dark: var(--cesar-orange-dark);
+  --color-cesar-black: var(--cesar-black);
+  --color-cesar-gray: var(--cesar-gray);
+  --color-cesar-slate: var(--cesar-slate);
+  --color-cesar-offwhite: var(--cesar-offwhite);
+  --font-sans: 'DM Sans', sans-serif;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6, button, input, select, textarea {
+  font-family: 'DM Sans', sans-serif;
+}
