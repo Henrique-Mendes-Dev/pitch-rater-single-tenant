@@ -1,6 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Configuração original do Turbopack para processar o Tailwind CSS
+  turbopack: {
+    rules: {
+      "*.css": {
+        loaders: ["@tailwindcss/turbopack"],
+        as: "*.css",
+      },
+    },
+  },
   // Remove todos os console.log automaticamente no build de produção
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
@@ -13,19 +22,19 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: "X-Frame-Options",
-            value: "DENY", // Impede que o site seja aberto dentro de iframes maliciosos (Clickjacking)
+            value: "DENY", 
           },
           {
             key: "X-Content-Type-Options",
-            value: "nosniff", // Bloqueia execução de arquivos disfarçados (MIME sniffing)
+            value: "nosniff", 
           },
           {
             key: "Referrer-Policy",
-            value: "strict-origin-when-cross-origin", // Protege dados de navegação ao clicar em links externos
+            value: "strict-origin-when-cross-origin", 
           },
           {
             key: "Strict-Transport-Security",
-            value: "max-age=63072000; includeSubDomains; preload", // Força conexão HTTPS estrita
+            value: "max-age=63072000; includeSubDomains; preload", 
           },
         ],
       },
