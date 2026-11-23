@@ -161,19 +161,23 @@ export default function EvaluationForm({ usuario, equipes }: EvaluationFormProps
     setErroValidacao('')
 
     try {
-      let notaPonderada = 0
+      // 1. Soma ponderada na base 500 (pesos: 15, 15, 15, 10, 20, 15, 10)
+      let pontuacaoBase = 0
       CRITERIOS.forEach(c => {
-        notaPonderada += (notas[c.chave] || 0) * c.pesoNum
+        pontuacaoBase += (notas[c.chave] || 0) * (c.pesoNum * 100)
       })
 
-      const notaFinal = Math.max(0, Number((notaPonderada + bonusTempo).toFixed(2)))
+      // 2. Normalização para 98 pontos + Bônus de Tempo (+2 ou -2) -> Escala 0 a 100
+      // Number(...toFixed(2)) mantém 100 como 100 (sem .00) e preserva decimais quando necessário (ex: 80.11)
+      const notaNormalizada = (pontuacaoBase / 500) * 98
+      const notaFinal = Math.max(0, Number((notaNormalizada + bonusTempo).toFixed(2)))
 
       const payload = {
         avaliador: usuario.nome,
         equipe: equipeNome,
         nota_final: notaFinal,
         bonus: bonusTempo,
-        detalhes: JSON.stringify(notas),
+        detalhes: notas,
         feedback_geral: feedback.trim()
       }
 

@@ -270,7 +270,7 @@ export default function AdminDashboard() {
     if (abaPlanilha === 'consolidada') {
       if (ranking.length === 0) return showAlert('Aviso', 'Não há dados para exportar no momento.')
       const cabecalhos = [
-        'Posição', 'Solução Avaliada', 'Nº de Avaliadores', 'Problema e Relevância (15%)', 'Validação e Solução (15%)',
+        'Posição', 'Equipe Avaliada', 'Nº de Avaliadores', 'Problema e Relevância (15%)', 'Validação e Solução (15%)',
         'Inovação e Originalidade (15%)', 'Design e Usabilidade (10%)', 'Execução Técnica (20%)', 'Viabilidade e Negócio (15%)',
         'Apresentação / Pitch (10%)', 'Gestão de Tempo (Bônus Total)', 'Nota Final'
       ]
@@ -607,7 +607,7 @@ export default function AdminDashboard() {
                         </div>
                         <div className="text-left sm:text-right">
                           <div className="text-[11px] uppercase font-bold tracking-widest text-orange-200">
-                            VENCEDOR
+                            CLASSIFICADO
                           </div>
                           <div className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                             {vencedoresCats.destaque}
@@ -739,7 +739,7 @@ export default function AdminDashboard() {
                         <thead className="bg-[#161616] text-white font-bold tracking-wider text-[11px] sticky top-0 z-20 shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
                           <tr className="h-[44px]">
                             <th className="px-4 border-r border-neutral-700 w-[100px] align-middle text-center bg-[#161616]">Posição</th>
-                            <th className="px-4 border-r border-neutral-700 w-[200px] align-middle text-center bg-[#161616]">Solução Avaliada</th>
+                            <th className="px-4 border-r border-neutral-700 w-[200px] align-middle text-center bg-[#161616]">Equipe Avaliada</th>
                             <th className="px-4 border-r border-neutral-700 w-[120px] align-middle text-center bg-[#161616]">Nº de<br/>Avaliadores</th>
                             <th className="px-4 border-r border-neutral-700 w-[150px] align-middle text-center bg-[#161616]">Problema e<br/>Relevância (15%)</th>
                             <th className="px-4 border-r border-neutral-700 w-[150px] align-middle text-center bg-[#161616]">Validação e<br/>Solução (15%)</th>
