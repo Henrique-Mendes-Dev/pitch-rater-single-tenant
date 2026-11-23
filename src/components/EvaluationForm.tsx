@@ -373,13 +373,13 @@ export default function EvaluationForm({ usuario, equipes }: EvaluationFormProps
                         <div
                           key={opcao.valor}
                           onClick={() => handleNotaChange(criterio.chave, opcao.valor)}
-                          className={`group flex items-center gap-4 px-5 py-3.5 rounded-xl border-2 transition-all cursor-pointer ${
+                          className={`group flex items-start gap-3.5 px-4 py-3.5 sm:px-5 rounded-xl border-2 transition-all cursor-pointer ${
                             isSelected
                               ? 'border-[#ff6002] bg-[#fffeee]'
                               : 'border-[#818b9d]/25 bg-white hover:border-[#ff6002] hover:bg-[#fffeee]'
                           }`}
                         >
-                          <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
+                          <div className={`w-5 h-5 mt-0.5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
                             isSelected 
                               ? 'border-[#ff6002] bg-white' 
                               : 'border-[#818b9d] group-hover:border-[#ff6002] bg-white'
@@ -391,7 +391,7 @@ export default function EvaluationForm({ usuario, equipes }: EvaluationFormProps
                             )}
                           </div>
 
-                          <div className={`text-xs sm:text-sm leading-normal truncate select-none transition-colors ${
+                          <div className={`text-xs sm:text-sm leading-relaxed whitespace-normal break-words select-none transition-colors ${
                             isSelected 
                               ? 'text-[#161616] font-bold' 
                               : 'text-[#3f3f3f] group-hover:text-[#161616] font-medium'

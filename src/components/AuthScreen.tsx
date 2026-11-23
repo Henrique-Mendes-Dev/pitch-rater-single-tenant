@@ -103,13 +103,13 @@ export default function AuthScreen({ onLogin }: AuthScreenProps) {
   }
 
   return (
-    <div className="absolute inset-0 z-50 flex flex-col items-center justify-center min-h-screen px-4 bg-[#fffeee] font-sans antialiased">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-start pt-8 pb-8 sm:justify-center sm:py-4 min-h-[100dvh] overflow-y-auto px-4 bg-[#fffeee] font-sans antialiased">
       
-      <div className="w-full max-w-[560px] bg-white rounded-3xl overflow-hidden border border-[#818b9d]/30 shadow-sm">
+      <div className="w-full max-w-[560px] bg-white rounded-3xl overflow-hidden border border-[#818b9d]/30 shadow-sm shrink-0">
         
         {/* Cabeçalho Escuro CESAR - Logotipo Oficial */}
-        <div className="h-44 sm:h-52 bg-[#161616] flex flex-col items-center justify-center relative">
-          <div className="flex items-center gap-2 select-none font-sans font-black tracking-tight text-5xl sm:text-6xl">
+        <div className="h-36 sm:h-52 bg-[#161616] flex flex-col items-center justify-center relative">
+          <div className="flex items-center gap-2 select-none font-sans font-black tracking-tight text-4xl sm:text-6xl">
             <span className="text-[#fffeee]">Pitch</span>
             <span className="text-[#ff6002]">Rater</span>
           </div>
@@ -117,8 +117,8 @@ export default function AuthScreen({ onLogin }: AuthScreenProps) {
         </div>
 
         {/* Formulário */}
-        <div className="p-8 sm:p-12 flex flex-col items-center bg-white">
-          <div className="text-center mb-8 w-full">
+        <div className="p-6 sm:p-12 flex flex-col items-center bg-white">
+          <div className="text-center mb-6 sm:mb-8 w-full">
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#161616] mb-2">
               Acesso à Banca
             </h2>
@@ -140,7 +140,7 @@ export default function AuthScreen({ onLogin }: AuthScreenProps) {
                 placeholder="Ex: 1001"
                 aria-invalid={!!erro && tentativas > 0}
                 aria-describedby={erro ? "login-error" : undefined}
-                className="w-full px-5 py-4 text-center text-sm font-bold text-[#161616] bg-[#fffeee] border-2 border-[#818b9d]/30 rounded-xl outline-none focus:border-[#ff6002] transition-colors placeholder:text-[#818b9d] placeholder:font-normal disabled:opacity-50"
+                className="w-full px-5 py-4 text-center text-base font-bold text-[#161616] bg-[#fffeee] border-2 border-[#818b9d]/30 rounded-xl outline-none focus:border-[#ff6002] transition-colors placeholder:text-[#818b9d] placeholder:font-normal disabled:opacity-50"
                 autoComplete="off"
               />
             </div>
