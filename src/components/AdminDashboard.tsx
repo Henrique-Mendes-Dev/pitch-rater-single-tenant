@@ -388,6 +388,8 @@ export default function AdminDashboard() {
     )
   }
 
+  const mostrarControlesTempoReal = abaAtiva === 'podio' || abaAtiva === 'auditoria'
+
   return (
     <div className="space-y-6 relative font-sans antialiased">
       {modal.isOpen && (
@@ -429,23 +431,27 @@ export default function AdminDashboard() {
         <div>
           <div className="flex items-center gap-3">
             <h2 className="text-2xl font-black text-[#161616] tracking-tight">Painel do Organizador</h2>
-            <div className="flex items-center gap-1.5 px-2 py-1 bg-green-50 border border-green-200 rounded-md">
-              <span className={`w-2 h-2 rounded-full ${isRealtimeActive ? 'bg-green-500 animate-pulse' : 'bg-neutral-300'}`}></span>
-              <span className="text-[10px] font-bold text-green-700 uppercase tracking-wide">AO VIVO</span>
-            </div>
+            {mostrarControlesTempoReal && (
+              <div className="flex items-center gap-1.5 px-2.5 py-1 bg-[#fffeee] border border-[#ff6002]/30 rounded-md">
+                <span className={`w-2 h-2 rounded-full ${isRealtimeActive ? 'bg-[#ff6002] animate-pulse' : 'bg-[#818b9d]/40'}`}></span>
+                <span className="text-[10px] font-extrabold text-[#ff6002] uppercase tracking-wider">AO VIVO</span>
+              </div>
+            )}
           </div>
           <p className="text-[#3f3f3f] text-sm font-medium mt-1">Visão global consolidada de resultados e auditoria.</p>
         </div>
         
-        <button
-          onClick={() => carregarDados(false)}
-          className="flex items-center gap-2 text-sm font-bold text-[#161616] hover:text-[#ff6002] transition-colors bg-white border border-[#818b9d]/30 hover:border-[#ff6002] px-4 py-2 rounded-xl w-fit cursor-pointer shadow-sm"
-        >
-          <svg className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-          </svg>
-          Sincronizar
-        </button>
+        {mostrarControlesTempoReal && (
+          <button
+            onClick={() => carregarDados(false)}
+            className="flex items-center gap-2 text-sm font-bold text-[#161616] hover:text-[#ff6002] transition-colors bg-white border border-[#818b9d]/30 hover:border-[#ff6002] px-4 py-2 rounded-xl w-fit cursor-pointer shadow-sm"
+          >
+            <svg className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+            Sincronizar
+          </button>
+        )}
       </div>
 
       <div className="flex gap-4 border-b border-[#818b9d]/20 overflow-x-auto whitespace-nowrap scrollbar-hide">

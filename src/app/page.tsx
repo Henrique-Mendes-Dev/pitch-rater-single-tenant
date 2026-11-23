@@ -26,7 +26,7 @@ export default function Home() {
   }, [usuario])
 
   return (
-    <div className="min-h-[100dvh] bg-white text-[#161616] flex flex-col font-sans overflow-x-hidden">
+    <div className="min-h-[100dvh] bg-white text-[#161616] flex flex-col font-sans overflow-x-clip">
       <Header usuario={usuario} onLogout={() => setUsuario(null)} />
 
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-5 sm:p-6 md:p-8">

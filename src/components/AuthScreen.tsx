@@ -162,8 +162,9 @@ export default function AuthScreen({ onLogin }: AuthScreenProps) {
             )}
 
             {erro && (
-              <div id="login-error" aria-live="assertive" className="text-center text-red-600 text-xs sm:text-sm font-bold px-4 py-3 bg-red-50 rounded-xl border border-red-200">
-                {erro}
+              <div id="login-error" aria-live="assertive" className="flex items-center justify-center gap-2 text-center text-[#161616] text-xs sm:text-sm font-bold px-4 py-3 bg-[#fffeee] rounded-xl border-2 border-[#ff6002]">
+                <span className="w-2 h-2 rounded-full bg-[#ff6002] shrink-0"></span>
+                <span>{erro}</span>
               </div>
             )}
 
