@@ -78,6 +78,7 @@ export default function EvaluationForm({ usuario, equipes }: EvaluationFormProps
   
   const [loading, setLoading] = useState(false)
   const [erroValidacao, setErroValidacao] = useState('')
+  const [campoComErro, setCampoComErro] = useState<string | null>(null)
   const [draftCarregado, setDraftCarregado] = useState(false)
 
   const [modalSucesso, setModalSucesso] = useState<{ isOpen: boolean; titulo: string; mensagem: string }>({
@@ -120,7 +121,7 @@ export default function EvaluationForm({ usuario, equipes }: EvaluationFormProps
         console.error('Erro ao ler o rascunho local', e)
       }
     }
-    setDraftCarregado(true) // Libera o salvamento automático para não sobrescrever com dados vazios na montagem
+    setDraftCarregado(true)
   }, [])
 
   // 3. Salva rascunho automático a cada alteração nos campos
@@ -133,32 +134,49 @@ export default function EvaluationForm({ usuario, equipes }: EvaluationFormProps
 
   const equipesDisponiveis = equipes.filter(eq => !equipesAvaliadas.includes(eq.nome))
 
+  const rolarParaCampo = (elementId: string) => {
+    const el = document.getElementById(elementId)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }
+
   const handleNotaChange = (chave: string, valor: number) => {
     setNotas(prev => ({ ...prev, [chave]: valor }))
-    setErroValidacao('')
+    if (campoComErro === chave) {
+      setCampoComErro(null)
+      setErroValidacao('')
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!equipeNome) {
-      setErroValidacao('Selecione uma equipe antes de submeter a avaliação.')
+      setCampoComErro('equipe')
+      setErroValidacao('Selecione a equipe que está apresentando antes de enviar.')
+      rolarParaCampo('campo-equipe')
       return
     }
 
-    const criteriosFaltando = CRITERIOS.filter(c => notas[c.chave] === undefined)
-    if (criteriosFaltando.length > 0) {
-      setErroValidacao('Todos os critérios de avaliação são de preenchimento obrigatório.')
+    const primeiroFaltando = CRITERIOS.find(c => notas[c.chave] === undefined)
+    if (primeiroFaltando) {
+      setCampoComErro(primeiroFaltando.chave)
+      setErroValidacao(`Preencha o critério "${primeiroFaltando.numero}. ${primeiroFaltando.titulo}" para continuar.`)
+      rolarParaCampo(`criterio-${primeiroFaltando.chave}`)
       return
     }
 
     if (bonusTempo === null) {
-      setErroValidacao('A avaliação de Gestão de Tempo é obrigatória.')
+      setCampoComErro('bonus')
+      setErroValidacao('Selecione uma opção em "Gestão de Tempo (Bônus)" para concluir.')
+      rolarParaCampo('campo-bonus')
       return
     }
 
     setLoading(true)
     setErroValidacao('')
+    setCampoComErro(null)
 
     try {
       // 1. Soma ponderada na base 500 (pesos: 15, 15, 15, 10, 20, 15, 10)
@@ -168,7 +186,6 @@ export default function EvaluationForm({ usuario, equipes }: EvaluationFormProps
       })
 
       // 2. Normalização para 98 pontos + Bônus de Tempo (+2 ou -2) -> Escala 0 a 100
-      // Number(...toFixed(2)) mantém 100 como 100 (sem .00) e preserva decimais quando necessário (ex: 80.11)
       const notaNormalizada = (pontuacaoBase / 500) * 98
       const notaFinal = Math.max(0, Number((notaNormalizada + bonusTempo).toFixed(2)))
 
@@ -184,7 +201,6 @@ export default function EvaluationForm({ usuario, equipes }: EvaluationFormProps
       const { error } = await supabase.from('avaliacoes').insert([payload])
       if (error) throw error
 
-      // Em caso de sucesso: limpa cache local e reseta o formulário
       localStorage.removeItem(DRAFT_KEY)
       
       const equipeNomeSalvo = equipeNome
@@ -271,19 +287,35 @@ export default function EvaluationForm({ usuario, equipes }: EvaluationFormProps
           </p>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-12">
+        <form onSubmit={handleSubmit} noValidate className="space-y-12">
           
           {/* Seletor de Equipe */}
-          <div className="bg-[#fffeee] p-6 rounded-2xl border border-[#818b9d]/20">
-            <label className="block text-sm font-bold text-[#161616] tracking-wide mb-2">
-              Equipe apresentando
-            </label>
+          <div
+            id="campo-equipe"
+            className={`p-6 rounded-2xl transition-all ${
+              campoComErro === 'equipe'
+                ? 'bg-[#fffeee] border-2 border-[#ff6002] shadow-sm'
+                : 'bg-[#fffeee] border border-[#818b9d]/20'
+            }`}
+          >
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <label className="block text-sm font-bold text-[#161616] tracking-wide">
+                Equipe apresentando
+              </label>
+              {campoComErro === 'equipe' && (
+                <span className="text-[11px] font-extrabold uppercase tracking-wider text-white bg-[#ff6002] px-2.5 py-0.5 rounded-md">
+                  Obrigatório
+                </span>
+              )}
+            </div>
             <select
-              required
               value={equipeNome}
               onChange={(e) => {
                 setEquipeNome(e.target.value)
-                setErroValidacao('')
+                if (campoComErro === 'equipe') {
+                  setCampoComErro(null)
+                  setErroValidacao('')
+                }
               }}
               className="w-full px-5 py-4 bg-white border-2 border-[#818b9d]/30 rounded-xl outline-none hover:border-[#ff6002] hover:bg-[#fffeee] focus:border-[#ff6002] focus:bg-[#fffeee] text-base text-[#161616] font-bold transition-all appearance-none cursor-pointer"
               style={{
@@ -298,18 +330,37 @@ export default function EvaluationForm({ usuario, equipes }: EvaluationFormProps
                 <option key={eq.id} value={eq.nome}>{eq.nome}</option>
               ))}
             </select>
+            {campoComErro === 'equipe' && (
+              <p className="mt-2.5 text-xs font-bold text-[#ff6002]">
+                Selecione a equipe que está apresentando antes de enviar.
+              </p>
+            )}
           </div>
 
           {/* Critérios Verticais */}
           <div className="space-y-12">
             {CRITERIOS.map((criterio) => {
               const valorSelecionado = notas[criterio.chave]
+              const temErro = campoComErro === criterio.chave
               return (
-                <div key={criterio.chave} className="pt-2">
+                <div
+                  key={criterio.chave}
+                  id={`criterio-${criterio.chave}`}
+                  className={`transition-all rounded-2xl ${
+                    temErro ? 'p-5 bg-[#fffeee] border-2 border-[#ff6002]' : 'pt-2'
+                  }`}
+                >
                   <div className="mb-4 pl-3.5 border-l-4 border-[#ff6002]">
-                    <h3 className="text-lg sm:text-xl font-bold text-[#161616] tracking-tight">
-                      {criterio.numero}. {criterio.titulo}
-                    </h3>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <h3 className="text-lg sm:text-xl font-bold text-[#161616] tracking-tight">
+                        {criterio.numero}. {criterio.titulo}
+                      </h3>
+                      {temErro && (
+                        <span className="text-[11px] font-extrabold uppercase tracking-wider text-white bg-[#ff6002] px-2.5 py-0.5 rounded-md">
+                          Preenchimento obrigatório
+                        </span>
+                      )}
+                    </div>
                     <p className="text-[#3f3f3f] text-xs sm:text-sm leading-relaxed mt-1 font-normal">
                       {criterio.descricao}
                     </p>
@@ -357,11 +408,25 @@ export default function EvaluationForm({ usuario, equipes }: EvaluationFormProps
           </div>
 
           {/* Gestão de Tempo */}
-          <div className="pt-6 border-t border-[#818b9d]/20">
+          <div
+            id="campo-bonus"
+            className={`transition-all rounded-2xl ${
+              campoComErro === 'bonus'
+                ? 'p-5 bg-[#fffeee] border-2 border-[#ff6002]'
+                : 'pt-6 border-t border-[#818b9d]/20'
+            }`}
+          >
             <div className="mb-4 pl-3.5 border-l-4 border-[#ff6002]">
-              <h3 className="text-lg sm:text-xl font-bold text-[#161616] tracking-tight">
-                Gestão de Tempo (Bônus)
-              </h3>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h3 className="text-lg sm:text-xl font-bold text-[#161616] tracking-tight">
+                  Gestão de Tempo (Bônus)
+                </h3>
+                {campoComErro === 'bonus' && (
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-white bg-[#ff6002] px-2.5 py-0.5 rounded-md">
+                    Preenchimento obrigatório
+                  </span>
+                )}
+              </div>
               <p className="text-[#3f3f3f] text-xs sm:text-sm leading-relaxed mt-1 font-normal">
                 Se a equipe tiver concluído dentro do tempo fornecido, atribua +2 pontos. Caso contrário, marque -2 pontos.
               </p>
@@ -371,7 +436,10 @@ export default function EvaluationForm({ usuario, equipes }: EvaluationFormProps
               <div
                 onClick={() => {
                   setBonusTempo(2)
-                  setErroValidacao('')
+                  if (campoComErro === 'bonus') {
+                    setCampoComErro(null)
+                    setErroValidacao('')
+                  }
                 }}
                 className={`group flex items-center gap-4 px-5 py-3.5 rounded-xl border-2 transition-all cursor-pointer ${
                   bonusTempo === 2
@@ -402,7 +470,10 @@ export default function EvaluationForm({ usuario, equipes }: EvaluationFormProps
               <div
                 onClick={() => {
                   setBonusTempo(-2)
-                  setErroValidacao('')
+                  if (campoComErro === 'bonus') {
+                    setCampoComErro(null)
+                    setErroValidacao('')
+                  }
                 }}
                 className={`group flex items-center gap-4 px-5 py-3.5 rounded-xl border-2 transition-all cursor-pointer ${
                   bonusTempo === -2
@@ -447,8 +518,9 @@ export default function EvaluationForm({ usuario, equipes }: EvaluationFormProps
           </div>
 
           {erroValidacao && (
-            <div className="p-4 rounded-xl text-center text-sm font-bold bg-red-50 text-red-600 border border-red-200">
-              {erroValidacao}
+            <div className="p-4 rounded-2xl text-center text-sm font-bold bg-[#fffeee] text-[#161616] border-2 border-[#ff6002] flex items-center justify-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#ff6002] shrink-0"></span>
+              <span>{erroValidacao}</span>
             </div>
           )}
 
